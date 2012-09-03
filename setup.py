@@ -23,7 +23,9 @@ setup(
 	namespace_packages=['ckanext', 'ckanext.datastore'],
 	include_package_data=True,
 	zip_safe=False,
-    install_requires = [],
+    install_requires = [
+        'psycopg2==2.4.5',    
+    ],
 	entry_points=\
 	"""
     [ckan.plugins]
