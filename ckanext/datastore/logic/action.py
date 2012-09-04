@@ -86,7 +86,7 @@ def datastore_search(context, data_dict):
     :type offset: int
     :param fields: ordered list of fields to return
                    (default: all fields in original order)
-    :type fields: list of dictionaries
+    :type fields: list of strings, or a single field as a string
     :param sort: comma separated field names with ordering
                  eg: "fieldname1, fieldname2 desc"
     :type sort: string
@@ -113,6 +113,11 @@ def datastore_search(context, data_dict):
     p.toolkit.check_access('datastore_search', context, data_dict)
 
     data_dict['connection_url'] = pylons.config['ckan.datastore_write_url']
+
+    # Allow `fields` to be a string, in which case, convert it to a
+    # unit-length list.
+    if 'fields' in data_dict and isinstance(data_dict['fields'], basestring):
+        data_dict['fields'] = [data_dict['fields']]
 
     result = db.search(context, data_dict)
     result.pop('id', None)
