@@ -328,7 +328,7 @@ def _where(field_ids, data_dict):
     for field, value in filters.iteritems():
         if field not in field_ids:
             raise p.toolkit.ValidationError({
-                'filters': ['field "{}" not in table']}
+                'filters': ['field "{0}" not in table']}
             )
         where_clauses.append(u'"{0}" = %s'.format(field))
         values.append(value)
@@ -432,8 +432,8 @@ def search_data(context, data_dict):
 
     sort = _sort(context, data_dict.get('sort'), field_ids)
 
-    sql_string = u'''select {}, count(*) over() as "_full_count"
-                    from "{}" {} {} limit {} offset {}'''\
+    sql_string = u'''select {0}, count(*) over() as "_full_count"
+                    from "{1}" {2} {3} limit {4} offset {5}'''\
         .format(select_columns, data_dict['resource_id'], where_clause,
                 sort, limit, offset)
     results = context['connection'].execute(sql_string, where_values)
