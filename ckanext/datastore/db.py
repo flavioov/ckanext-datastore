@@ -30,14 +30,17 @@ def _is_valid_field_name(name):
     return True
 
 
-def _validate_int(i, field_name):
+def _validate_positive_int(s, field_name):
     try:
-        int(i)
+        i = int(s)
+        if i < 0:
+            raise p.toolkit.ValidationError({
+                field_name: ['{0} must not be negative'.format(i)]
+            })
     except ValueError:
         raise p.toolkit.ValidationError({
-            'field_name': ['{0} is not an integer'.format(i)]
+            field_name: ['{0} is not an integer'.format(s)]
         })
-
 
 def _get_engine(context, data_dict):
     'Get either read or write engine.'
