@@ -27,7 +27,7 @@ def datastore_create(context, data_dict):
 
     if not model.Resource.get(id):
         raise p.toolkit.ObjectNotFound(p.toolkit._(
-            'Resource "{}" was not found.'.format(id)
+            'Resource "{0}" was not found.'.format(id)
         ))
 
     p.toolkit.check_access('datastore_create', context, data_dict)
@@ -57,7 +57,7 @@ def datastore_delete(context, data_dict):
 
     if not model.Resource.get(id):
         raise p.toolkit.ObjectNotFound(p.toolkit._(
-            'Resource "{}" was not found.'.format(id)
+            'Resource "{0}" was not found.'.format(id)
         ))
 
     p.toolkit.check_access('datastore_delete', context, data_dict)
@@ -107,7 +107,7 @@ def datastore_search(context, data_dict):
 
     if not model.Resource.get(id):
         raise p.toolkit.ObjectNotFound(p.toolkit._(
-            'Resource "{}" was not found.'.format(id)
+            'Resource "{0}" was not found.'.format(id)
         ))
 
     p.toolkit.check_access('datastore_search', context, data_dict)

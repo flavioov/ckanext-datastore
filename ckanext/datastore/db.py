@@ -35,7 +35,7 @@ def _validate_int(i, field_name):
         int(i)
     except ValueError:
         raise p.toolkit.ValidationError({
-            'field_name': ['{} is not an integer'.format(i)]
+            'field_name': ['{0} is not an integer'.format(i)]
         })
 
 
@@ -176,7 +176,7 @@ def create_table(context, data_dict):
         if 'type' not in field:
             if not records or field['id'] not in records[0]:
                 raise p.toolkit.ValidationError({
-                    'fields': ['{} type not guessable'.format(field['id'])]
+                    'fields': ['{0} type not guessable'.format(field['id'])]
                 })
             field['type'] = _guess_type(records[0][field['id']])
 
@@ -223,7 +223,7 @@ def alter_table(context, data_dict):
         if num < len(current_fields):
             if field['id'] != current_fields[num]['id']:
                 raise p.toolkit.ValidationError({
-                    'fields': [('Supplied field "{}" not '
+                    'fields': [('Supplied field "{0}" not '
                               'present or in wrong order').format(field['id'])]
                 })
             ## no need to check type as field already defined.
@@ -232,7 +232,7 @@ def alter_table(context, data_dict):
         if 'type' not in field:
             if not records or field['id'] not in records[0]:
                 raise p.toolkit.ValidationError({
-                    'fields': ['{} type not guessable'.format(field['id'])]
+                    'fields': ['{0} type not guessable'.format(field['id'])]
                 })
             field['type'] = _guess_type(records[0][field['id']])
         new_fields.append(field)
@@ -252,7 +252,7 @@ def alter_table(context, data_dict):
                 })
 
     for field in new_fields:
-        sql = 'alter table "{}" add "{}" {}'.format(
+        sql = 'alter table "{0}" add "{1}" {2}'.format(
             data_dict['resource_id'],
             field['id'],
             field['type'])
@@ -276,14 +276,14 @@ def insert_data(context, data_dict):
         # check record for sanity
         if not isinstance(record, dict):
             raise p.toolkit.ValidationError({
-                'records': [u'row {} is not a json object'.format(num)]
+                'records': [u'row {0} is not a json object'.format(num)]
             })
         ## check for extra fields in data
         extra_keys = set(record.keys()) - set(field_names)
 
         if extra_keys:
             raise p.toolkit.ValidationError({
-                'records': [u'row {} has extra keys "{}"'.format(
+                'records': [u'row {0} has extra keys "{1}"'.format(
                     num + 1,
                     ', '.join(list(extra_keys))
                 )]
@@ -330,7 +330,7 @@ def _where(field_ids, data_dict):
             raise p.toolkit.ValidationError({
                 'filters': ['field "{}" not in table']}
             )
-        where_clauses.append(u'"{}" = %s'.format(field))
+        where_clauses.append(u'"{0}" = %s'.format(field))
         values.append(value)
 
     q = data_dict.get('q')
@@ -374,14 +374,14 @@ def _sort(context, sort, field_ids):
 
         if field not in field_ids:
             raise p.toolkit.ValidationError({
-                'sort': [u'field {} not it table'.format(
+                'sort': [u'field {0} not it table'.format(
                     unicode(field, 'utf-8'))]
             })
         if sort.lower() not in ('asc', 'desc'):
             raise p.toolkit.ValidationError({
                 'sort': ['sorting can only be asc or desc']
             })
-        clause_parsed.append(u'"{}" {}'.format(
+        clause_parsed.append(u'"{0}" {1}'.format(
             field, sort)
         )
 
@@ -395,7 +395,7 @@ def delete_data(context, data_dict):
     where_clause, where_values = _where(field_ids, data_dict)
 
     context['connection'].execute(
-        u'delete from "{}" {}'.format(
+        u'delete from "{0}" {1}'.format(
             data_dict['resource_id'],
             where_clause
         ),
@@ -416,12 +416,12 @@ def search_data(context, data_dict):
         for field in field_ids:
             if not field in all_field_ids:
                 raise p.toolkit.ValidationError({
-                    'fields': [u'field "{}" not in table'.format(field)]}
+                    'fields': [u'field "{0}" not in table'.format(field)]}
                 )
     else:
         field_ids = all_field_ids
 
-    select_columns = ', '.join([u'"{}"'.format(field_id)
+    select_columns = ', '.join([u'"{0}"'.format(field_id)
                                 for field_id in field_ids])
     where_clause, where_values = _where(all_field_ids, data_dict)
     limit = data_dict.get('limit', 100)
@@ -492,7 +492,7 @@ def create(context, data_dict):
         # check if table already existes
         trans = context['connection'].begin()
         context['connection'].execute(
-            u'set local statement_timeout to {}'.format(timeout))
+            u'set local statement_timeout to {0}'.format(timeout))
         result = context['connection'].execute(
             'select * from pg_tables where tablename = %s',
              data_dict['resource_id']
@@ -533,7 +533,7 @@ def delete(context, data_dict):
             })
         if not 'filters' in data_dict:
             context['connection'].execute(
-                u'drop table "{}"'.format(data_dict['resource_id'])
+                u'drop table "{0}"'.format(data_dict['resource_id'])
             )
         else:
             delete_data(context, data_dict)
@@ -556,7 +556,7 @@ def search(context, data_dict):
     try:
         # check if table existes
         context['connection'].execute(
-            u'set local statement_timeout to {}'.format(timeout))
+            u'set local statement_timeout to {0}'.format(timeout))
         result = context['connection'].execute(
             'select * from pg_tables where tablename = %s',
              data_dict['resource_id']

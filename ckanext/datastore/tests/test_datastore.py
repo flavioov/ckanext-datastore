@@ -395,7 +395,7 @@ class TestDatastoreDelete(tests.WsgiAppCase):
             c.execute('select * from "{0}";'.format(resource_id))
             raise Exception("Data not deleted")
         except sqlalchemy.exc.ProgrammingError as e:
-            expected_msg = 'relation "{}" does not exist'.format(resource_id)
+            expected_msg = 'relation "{0}" does not exist'.format(resource_id)
             assert expected_msg in str(e)
 
         model.Session.remove()
