@@ -430,8 +430,8 @@ def search_data(context, data_dict):
     limit = data_dict.get('limit', 100)
     offset = data_dict.get('offset', 0)
 
-    _validate_int(limit, 'limit')
-    _validate_int(offset, 'offset')
+    _validate_positive_int(limit, 'limit')
+    _validate_positive_int(offset, 'offset')
 
     sort = _sort(context, data_dict.get('sort'), field_ids)
 
