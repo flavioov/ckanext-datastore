@@ -267,7 +267,7 @@ def create_indexes(context, data_dict):
             for field in fields:
                 if field not in field_ids:
                     raise p.toolkit.ValidationError({
-                        'index': [('The field {} is not a valid column name.').format(
+                        'index': [('The field {0} is not a valid column name.').format(
                             index)]
                     })
             fields_string = u','.join(['"%s"' % field for field in fields])
@@ -286,7 +286,7 @@ def create_indexes(context, data_dict):
         for field in primary_key:
             if field not in field_ids:
                 raise p.toolkit.ValidationError({
-                    'primary_key': [('The field {} is not a valid column name.').format(
+                    'primary_key': [('The field {0} is not a valid column name.').format(
                         field)]
                 })
         if primary_key:
@@ -298,7 +298,7 @@ def create_indexes(context, data_dict):
 
 
 def _drop_indexes(context, data_dict, unique=False):
-    sql_drop_index = u'drop index "{}" cascade'
+    sql_drop_index = u'drop index "{0}" cascade'
     sql_get_index_string = """
         select
             i.relname as index_name
@@ -390,7 +390,7 @@ def upsert_data(context, data_dict):
 
     if method not in _methods:
         raise p.toolkit.ValidationError({
-            'method': [u'{} is not defined'.format(method)]
+            'method': [u'{0} is not defined'.format(method)]
         })
 
     fields = _get_fields(context, data_dict)
@@ -427,7 +427,7 @@ def upsert_data(context, data_dict):
                     if record.get(field['id']) == None]
             if missing_columns:
                 raise p.toolkit.ValidationError({
-                    'key': [u'rows {} are missing but needed as key'.format(
+                    'key': [u'rows {0} are missing but needed as key'.format(
                         ','.join(missing_columns))]
                 })
             keys = [records[key] for key in key_parts]
@@ -452,8 +452,8 @@ def upsert_data(context, data_dict):
             res_id=data_dict['resource_id'],
             columns=sql_columns,
             values=', '.join(['%s' for field in field_names]),
-            primary_key='({})'.format(','.join(['"%s"' % part for part in key_parts])),
-            primary_value='({})'.format(','.join(["'%s'"] * len(key_parts)))
+            primary_key='({0})'.format(','.join(['"%s"' % part for part in key_parts])),
+            primary_value='({0})'.format(','.join(["'%s'"] * len(key_parts)))
         )
         context['connection'].execute(sql_string, rows)
 
@@ -487,14 +487,14 @@ def _validate_record(record, num, field_names):
     # check record for sanity
     if not isinstance(record, dict):
         raise p.toolkit.ValidationError({
-            'records': [u'row {} is not a json object'.format(num)]
+            'records': [u'row {0} is not a json object'.format(num)]
         })
     ## check for extra fields in data
     extra_keys = set(record.keys()) - set(field_names)
 
     if extra_keys:
         raise p.toolkit.ValidationError({
-            'records': [u'row {} has extra keys "{}"'.format(
+            'records': [u'row {0} has extra keys "{1}"'.format(
                 num + 1,
                 ', '.join(list(extra_keys))
             )]
@@ -834,7 +834,7 @@ def search_sql(context, data_dict):
 
     try:
         context['connection'].execute(
-            u'set local statement_timeout to {}'.format(timeout))
+            u'set local statement_timeout to {0}'.format(timeout))
         results = context['connection'].execute(
             data_dict['sql']
         )

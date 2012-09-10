@@ -224,7 +224,7 @@ class TestDatastoreCreate(tests.WsgiAppCase):
         assert results == results_alias
 
         sql = ("select * from _table_metadata "
-            "where alias_of='{}' and name='{}'").format(resource.id, alias)
+            "where alias_of='{0}' and name='{1}'").format(resource.id, alias)
         results = c.execute(sql)
         assert results.rowcount == 1
 
@@ -554,7 +554,7 @@ class TestDatastoreDelete(tests.WsgiAppCase):
         c = model.Session.connection()
 
         # alias should be deleted
-        results = c.execute("select 1 from pg_views where viewname = '{}'".format(self.data['alias']))
+        results = c.execute("select 1 from pg_views where viewname = '{0}'".format(self.data['alias']))
         assert results.rowcount == 0
 
         try:
@@ -1016,7 +1016,7 @@ class TestDatastoreSQL(tests.WsgiAppCase):
             assert db.is_single_statement(multiple) is False
 
     def test_select_basic(self):
-        query = 'SELECT * FROM public."{}"'.format(self.data['resource_id'])
+        query = 'SELECT * FROM public."{0}"'.format(self.data['resource_id'])
         data = {'sql': query}
         postparams = json.dumps(data)
         auth = {'Authorization': str(self.sysadmin_user.apikey)}
@@ -1028,7 +1028,7 @@ class TestDatastoreSQL(tests.WsgiAppCase):
         assert result['records'] == self.expected_records
 
         # test alias search
-        query = 'SELECT * FROM public."{}"'.format(self.data['alias'])
+        query = 'SELECT * FROM public."{0}"'.format(self.data['alias'])
         data = {'sql': query}
         postparams = json.dumps(data)
         res = self.app.post('/api/action/datastore_search_sql', params=postparams,

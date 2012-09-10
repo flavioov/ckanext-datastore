@@ -70,7 +70,7 @@ def datastore_upsert(context, data_dict):
 
     if not model.Resource.get(id):
         raise p.toolkit.ObjectNotFound(p.toolkit._(
-            'Resource "{}" was not found.'.format(id)
+            'Resource "{0}" was not found.'.format(id)
         ))
 
     p.toolkit.check_access('datastore_upsert', context, data_dict)
@@ -160,7 +160,7 @@ def datastore_search(context, data_dict):
     if not res_exists:
         # assume id is an alias
         alias_sql = ('select alias_of from "_table_metadata" '
-            "where name = '{}'").format(id)
+            "where name = '{0}'").format(id)
         result = db._get_engine(None, data_dict).execute(alias_sql).fetchone()
         if result:
             alias_exists = model.Resource.get(result[0].strip('"'))

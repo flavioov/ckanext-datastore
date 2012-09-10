@@ -117,7 +117,7 @@ class DatastorePlugin(p.SingletonPlugin):
                     if 'permission denied' not in str(e):
                         raise
                 else:
-                    log.info("Connection url {}"
+                    log.info("Connection url {0}"
                         .format(self.read_url))
                     raise Exception("We have write permissions on the read-only database.")
                 finally:
@@ -142,7 +142,7 @@ class DatastorePlugin(p.SingletonPlugin):
                 JOIN pg_class as dependent ON d.refobjid = dependent.oid
             WHERE dependee.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname='public')
         '''
-        create_alias_table_sql = u'create or replace view "_table_metadata" as {}'.format(mapping_sql)
+        create_alias_table_sql = u'create or replace view "_table_metadata" as {0}'.format(mapping_sql)
         connection = db._get_engine(None,
             {'connection_url': pylons.config['ckan.datastore_write_url']}).connect()
         connection.execute(create_alias_table_sql)
