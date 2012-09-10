@@ -93,12 +93,9 @@ class DatastorePlugin(p.SingletonPlugin):
     def _check_read_permissions(self):
         '''
         Check whether the right permissions are set for the read only user.
-        A table is created by the write user to test the read only user.
+        The table 'writetest' was created by
+        create_datastore_db_and_read_only_user.sql for this purpose.
         '''
-        write_connection = db._get_engine(None,
-            {'connection_url': self.write_url}).connect()
-        write_connection.execute(u"CREATE TABLE public.foo (id INTEGER NOT NULL, name VARCHAR)")
-
         read_connection = db._get_engine(None,
             {'connection_url': self.read_url}).connect()
         read_trans = read_connection.begin()
@@ -124,8 +121,6 @@ class DatastorePlugin(p.SingletonPlugin):
                     read_trans.rollback()
         except Exception:
             raise
-        finally:
-            write_connection.execute("DROP TABLE foo")
 
     def _create_alias_table(self):
         mapping_sql = '''

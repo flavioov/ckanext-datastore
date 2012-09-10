@@ -9,6 +9,12 @@ is possible to set maindb = datastoredb.
 
 To run the script, execute:
     sudo -u postgres psql postgres -f create_read_only_user.sql
+
+Note there are two issues:
+ * the read-only user's has no password set
+ * the ownership of the created database is not set
+Therefore it is advisable to create the user and database manually 
+beforehand (and ignore the two errors), until this is fixed.
 */
 
 \set maindb "ckan"
@@ -53,3 +59,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO :rouser;
 -- grant access to new tables and views by default
 ALTER DEFAULT PRIVILEGES FOR USER :ckanuser IN SCHEMA public
    GRANT SELECT ON TABLES TO :rouser;
+
+-- create table for testing that will be used to test the readonly-user
+-- can't write
+CREATE TABLE public.writetest (id INTEGER NOT NULL, name VARCHAR);
