@@ -17,11 +17,11 @@ Therefore it is advisable to create the user and database manually
 beforehand (and ignore the two errors), until this is fixed.
 */
 
-\set maindb "ckan"
+\set maindb "dgu"
 -- don't quote the datastoredb variable or create the database separately
-\set datastoredb datastore
-\set ckanuser ckanuser
-\set rouser readonlyuser
+\set datastoredb dgudatastore
+\set ckanuser dgu
+\set rouser dguro
 
 -- create the datastore database
 create database :datastoredb;
