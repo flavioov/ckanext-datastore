@@ -1,7 +1,7 @@
 import logging
 import pylons
 import sqlalchemy
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError, InternalError
 import ckan.plugins as p
 import ckanext.datastore.logic.action as action
 import ckanext.datastore.logic.auth as auth
@@ -102,7 +102,7 @@ class DatastorePlugin(p.SingletonPlugin):
 
         statements = [
             u"CREATE TABLE public.bar (id INTEGER NOT NULL, name VARCHAR)",
-            u"INSERT INTO public.foo VALUES (1, 'okfn')"
+            u"INSERT INTO public.writetest VALUES (1, 'okfn')"
         ]
 
         try:
@@ -112,6 +112,10 @@ class DatastorePlugin(p.SingletonPlugin):
                     read_connection.execute(sql)
                 except ProgrammingError, e:
                     if 'permission denied' not in str(e):
+                        raise
+                except InternalError, e:
+                    # This occurs when a slave in a Postgres master-slave config
+                    if 'read-only transaction' not in str(e):
                         raise
                 else:
                     log.info("Connection url {0}"
