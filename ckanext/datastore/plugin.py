@@ -127,24 +127,33 @@ class DatastorePlugin(p.SingletonPlugin):
             raise
 
     def _create_alias_table(self):
-        mapping_sql = '''
-            SELECT distinct
-                dependee.relname AS name,
-                -- r.ev_class::regclass AS oid,
-                dependent.relname AS alias_of
-                -- d.refobjid::regclass AS oid,
-            FROM
-                pg_attribute    as a
-                JOIN pg_depend  as d on d.refobjid = a.attrelid AND d.refobjsubid = a.attnum
-                JOIN pg_rewrite as r ON d.objid = r.oid
-                JOIN pg_class as dependee ON r.ev_class = dependee.oid
-                JOIN pg_class as dependent ON d.refobjid = dependent.oid
-            WHERE dependee.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname='public')
-        '''
-        create_alias_table_sql = u'create or replace view "_table_metadata" as {0}'.format(mapping_sql)
+
         connection = db._get_engine(None,
             {'connection_url': pylons.config['ckan.datastore_write_url']}).connect()
-        connection.execute(create_alias_table_sql)
+
+        with connection.begin() as transaction:
+
+            table_metadata_exists_sql = '''
+                SELECT 1 FROM pg_views where viewname = '_table_metadata'
+            '''
+            table_metadata_exists = connection.execute(table_metadata_exists_sql).fetchone()
+            if not table_metadata_exists:
+                mapping_sql = '''
+                    SELECT distinct
+                        dependee.relname AS name,
+                        -- r.ev_class::regclass AS oid,
+                        dependent.relname AS alias_of
+                        -- d.refobjid::regclass AS oid,
+                    FROM
+                        pg_attribute    as a
+                        JOIN pg_depend  as d on d.refobjid = a.attrelid AND d.refobjsubid = a.attnum
+                        JOIN pg_rewrite as r ON d.objid = r.oid
+                        JOIN pg_class as dependee ON r.ev_class = dependee.oid
+                        JOIN pg_class as dependent ON d.refobjid = dependent.oid
+                    WHERE dependee.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname='public')
+                '''
+                create_alias_table_sql = u'create view "_table_metadata" as {0}'.format(mapping_sql)
+                connection.execute(create_alias_table_sql)
 
     def get_actions(self):
         available_actions = {'datastore_create': action.datastore_create,
